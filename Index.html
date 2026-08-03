@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Daily Maths Practice: Law of Indices</title>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://unpkg.com/mathlive"></script>
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --bg-color: #ecf0f1;
+      --text-color: #333;
+      --success: #27ae60;
+      --danger: #c0392b;
+      --paper: #8e44ad;
+      --keyboard-toolbar-display: none !important;
+      --keyboard-actionbar-display: none !important;
+    }
+
+    math-virtual-keyboard::part(toolbar),
+    math-virtual-keyboard::part(action-toolbar),
+    math-virtual-keyboard::part(actionbar) {
+      display: none !important;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      box-sizing: border-box;
+      margin-bottom: 30px;
+    }
+
+    .hidden { display: none !important; }
+
+    .score-board {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 25px;
+      color: var(--secondary);
+      background: #e8f4fc;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    button {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      margin: 10px;
+      font-size: 1.05rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      max-width: 300px;
+      transition: background 0.3s, transform 0.1s;
+    }
+
+    button:hover { background: #2980b9; }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .level-btn-1 { background: #2ecc71; }
+    .level-btn-1:hover { background: #27ae60; }
+    .level-btn-2 { background: #f1c40f; color: #333; }
+    .level-btn-2:hover { background: #f39c12; }
+    .level-btn-p2 { background: #e67e22; }
+    .level-btn-p2:hover { background: #d35400; }
+
+    .counter-text {
+      display: block;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      opacity: 0.9;
+    }
+
+    .menu-grid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .paper1-group,
+    .paper2-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 300px;
+      gap: 6px;
+    }
+
+    .paper1-group button,
+    .paper2-group button {
+      margin: 0;
+      width: 100%;
+      max-width: none;
+    }
+
+    @media (min-width: 760px) {
+      .menu-grid {
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+        gap: 26px;
+      }
+
+      .paper1-group,
+      .paper2-group {
+        width: 300px;
+        max-width: 300px;
+        justify-content: center;
+      }
+
+      .paper1-group,
+      .paper2-group {
+        align-items: stretch;
+      }
+    }
+
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      text-align: center;
+    }
+
+    @media (min-width: 850px) {
+      .workspace {
+        flex-direction: row;
+        text-align: left;
+      }
+      .question-section {
+        flex: 1.2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .canvas-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    #question-display {
+      font-size: 1.7rem;
+      margin: 10px 0;
+      min-height: 90px;
+      overflow-x: auto;
+      padding: 10px;
+      width: 100%;
+      text-align: center;
+    }
+
+    math-field {
+      font-size: 1.55rem;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto 15px;
+      border: 2px solid #bdc3c7;
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    math-field:focus-within { border-color: var(--secondary); outline: none; }
+    math-field::part(menu-toggle),
+    math-field::part(virtual-keyboard-toggle) { display: none; }
+
+    #custom-html-keyboard {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto 20px;
+      background: #f4f6f7;
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #bdc3c7;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+      touch-action: manipulation;
+    }
+
+    .key-btn {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px 0;
+      margin: 0;
+      width: 100%;
+      font-size: 1.4rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #2c3e50;
+      box-shadow: 0 3px 0 #ccc;
+      user-select: none;
+      transition: all 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: none;
+    }
+
+    .key-btn:active {
+      transform: translateY(3px);
+      box-shadow: none;
+      background: #e2e6e8;
+    }
+
+    .key-action {
+      background: #3498db;
+      color: #fff;
+      border-color: #2980b9;
+      box-shadow: 0 3px 0 #2980b9;
+    }
+
+    .icon-frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .icon-frac .box {
+      width: 12px;
+      height: 12px;
+      border: 2px solid currentColor;
+      border-radius: 1px;
+      box-sizing: border-box;
+    }
+
+    .icon-frac .line {
+      width: 18px;
+      height: 2px;
+      background: currentColor;
+    }
+
+    .icon-index {
+      display: inline-flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .icon-index .base-box {
+      width: 15px;
+      height: 15px;
+      border: 2px solid currentColor;
+      border-radius: 1px;
+      margin-top: 6px;
+      box-sizing: border-box;
+    }
+
+    .icon-index .sup-box {
+      width: 9px;
+      height: 9px;
+      border: 2px solid currentColor;
+      border-radius: 1px;
+      margin-left: 2px;
+      box-sizing: border-box;
+    }
+
+    .choices {
+      width: 100%;
+      max-width: 540px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 10px auto 18px;
+    }
+
+    .choice {
+      background: #f7f9fa;
+      color: #2c3e50;
+      border: 2px solid #d6dde2;
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: 0.2s;
+      text-align: left;
+    }
+
+    .choice:hover { border-color: #3498db; background: #eef7fd; }
+    .choice.selected { border-color: #3498db; background: #dff0fb; }
+
+    .scratchpad-container {
+      width: 100%;
+      border: 2px dashed #bdc3c7;
+      border-radius: 8px;
+      background: #f9fbfb;
+    }
+
+    canvas {
+      width: 100%;
+      height: 380px;
+      border-radius: 8px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .clear-btn {
+      background: #e74c3c;
+      padding: 8px 15px;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      max-width: 150px;
+    }
+
+    .clear-btn:hover { background: #c0392b; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 20000;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    #feedback-correct-answer {
+      font-size: 1.15rem;
+      margin: 20px 0;
+      color: var(--primary);
+      text-align: left;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid var(--danger);
+      display: none;
+    }
+
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="menu-screen" class="container">
+    <h1 style="color: var(--primary);">Daily Maths Practice</h1>
+    <h2>Law of Indices</h2>
+    <div class="score-board">Total Score: <span id="score-display">0</span></div>
+    <p style="font-size: 1.08rem; color: #666;">Choose one to start:</p>
+
+    <div class="menu-grid">
+      <div class="paper1-group">
+        <button class="level-btn-1" onclick="startQuestion('paper1', 1)">
+          Paper 1 · Level 1 (1 Mark)
+          <span class="counter-text">Correct: <span id="count-p1l1">0</span></span>
+        </button>
+
+        <button class="level-btn-2" onclick="startQuestion('paper1', 2)">
+          Paper 1 · Level 2 (2 Marks)
+          <span class="counter-text">Correct: <span id="count-p1l2">0</span></span>
+        </button>
+      </div>
+
+      <div class="paper2-group">
+        <button class="level-btn-p2" onclick="startQuestion('paper2', 1)">
+          Paper 2 (1 Mark)
+          <span class="counter-text">Correct: <span id="count-p2">0</span></span>
+        </button>
+      </div>
+    </div>
+
+    <p style="font-size: 1.1rem; color: #e74c3c; font-weight: bold; margin-top: 25px;">
+      Obtain at least 15 marks to finish the daily practice
+    </p>
+  </div>
+
+  <div id="question-screen" class="container hidden">
+    <h3 id="level-title" style="color: var(--primary); margin-top: 0;"></h3>
+
+    <div class="workspace">
+      <div class="question-section">
+        <div id="question-display"></div>
+
+        <div id="input-mode">
+          <p style="font-size: 1.05rem; color: #555; text-align: center; margin-bottom: 5px;">Enter the simplified answer using positive indices:</p>
+          <math-field id="answer-input" math-virtual-keyboard-policy="manual"></math-field>
+          <div id="custom-html-keyboard">
+            <button class="key-btn" onclick="insertMath('7')">7</button>
+            <button class="key-btn" onclick="insertMath('8')">8</button>
+            <button class="key-btn" onclick="insertMath('9')">9</button>
+            <button class="key-btn key-action" onclick="insertMath('\\frac{#@}{#?}')"><span class="icon-frac"><span class="box"></span><span class="line"></span><span class="box"></span></span></button>
+            <button class="key-btn key-action" onclick="insertMath('a')">a</button>
+
+            <button class="key-btn" onclick="insertMath('4')">4</button>
+            <button class="key-btn" onclick="insertMath('5')">5</button>
+            <button class="key-btn" onclick="insertMath('6')">6</button>
+            <button class="key-btn key-action" onclick="insertMath('^{#?}')"><span class="icon-index"><span class="base-box"></span><span class="sup-box"></span></span></button>
+            <button class="key-btn key-action" onclick="insertMath('b')">b</button>
+
+            <button class="key-btn" onclick="insertMath('1')">1</button>
+            <button class="key-btn" onclick="insertMath('2')">2</button>
+            <button class="key-btn" onclick="insertMath('3')">3</button>
+            <button class="key-btn key-action" onclick="insertMath('(')">(</button>
+            <button class="key-btn key-action" onclick="insertMath(')')">)</button>
+
+            <button class="key-btn key-action" onclick="insertMath('-')">−</button>
+            <button class="key-btn" onclick="insertMath('0')">0</button>
+            <button class="key-btn key-action" onclick="cmdMath('moveToPreviousChar')">◀</button>
+            <button class="key-btn key-action" onclick="cmdMath('moveToNextChar')">▶</button>
+            <button class="key-btn" onclick="cmdMath('deleteBackward')">⌫</button>
+          </div>
+        </div>
+
+        <div id="mcq-mode" class="hidden">
+          <p style="font-size: 1.05rem; color: #555; text-align: center; margin-bottom: 8px;">Choose the correct answer:</p>
+          <div id="choices" class="choices"></div>
+        </div>
+
+        <button id="submit-btn" onclick="checkAnswer()">Submit Answer</button>
+        <button onclick="returnToMenu()" style="background: #95a5a6;">Back to Menu</button>
+      </div>
+
+      <div class="canvas-section">
+        <p style="margin: 0 0 10px; color: #7f8c8d; font-weight: bold;">Scratchpad for working steps:</p>
+        <div class="scratchpad-container"><canvas id="scratchpad"></canvas></div>
+        <button class="clear-btn" onclick="clearScratchpad()">Clear Scratchpad</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message" style="font-size: 1.15rem;"></p>
+      <div id="feedback-correct-answer"></div>
+      <button id="feedback-btn" onclick="closeFeedback()">Continue</button>
+    </div>
+  </div>
+
+  <div id="form-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 450px; width: 100%;">
+      <h2 style="color: var(--success);">Achievement Unlocked!</h2>
+      <p>You've reached 15 marks! Enter your details and submit your practice record.</p>
+      <div class="form-group"><label>Name:</label><input type="text" id="student-name" placeholder="e.g. Chan Tai Man"></div>
+      <div class="form-group"><label>Class:</label><select id="student-class"></select></div>
+      <div class="form-group"><label>Class Number:</label><select id="student-number"></select></div>
+      <button id="final-submit-btn" onclick="submitResults()" style="background: var(--success);">Submit Results</button>
+      <p id="form-status" style="display: none; color: #555;">Submitting...</p>
+    </div>
+  </div>
+
+  <script>
+    let currentScore = 0;
+    let currentPaper = 'paper1';
+    let currentLevel = 1;
+    let currentQuestion = null;
+    let currentSolutionTex = '';
+    let formTriggered = false;
+    let selectedChoice = null;
+    let submittedOnce = false;
+    let levelCounts = { p1l1: 0, p1l2: 0, p2: 0 };
+    let history = [];
+    let canvas, ctx, isDrawing = false;
+    const STORE_KEY = 'law_indices_daily_practice_v3';
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init() {
+      const classes = ['1A','1B','1C','1D','1E','1F','2A','2B','2C','2D','2E','2F','3A','3B','3C','3D','3E','3F'];
+      const classSelect = document.getElementById('student-class');
+      if (classSelect && !classSelect.options.length) classes.forEach(c => classSelect.add(new Option(c, c)));
+      const numSelect = document.getElementById('student-number');
+      if (numSelect && !numSelect.options.length) for (let i = 1; i <= 38; i++) numSelect.add(new Option(i, i));
+      initCanvas();
+      await loadProgress();
+      updateScoreUI();
+    }
+
+    function updateScoreUI() {
+      document.getElementById('score-display').textContent = currentScore;
+      document.getElementById('count-p1l1').textContent = levelCounts.p1l1;
+      document.getElementById('count-p1l2').textContent = levelCounts.p1l2;
+      document.getElementById('count-p2').textContent = levelCounts.p2;
+    }
+
+    async function saveProgress() {
+      if (!window.sayoStorage) return;
+      const data = { currentScore, levelCounts, history, submittedOnce };
+      await window.sayoStorage.setItem(STORE_KEY, JSON.stringify(data));
+    }
+
+    async function loadProgress() {
+      if (!window.sayoStorage) return;
+      try {
+        const raw = await window.sayoStorage.getItem(STORE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        currentScore = data.currentScore || 0;
+        levelCounts = data.levelCounts || levelCounts;
+        history = data.history || [];
+        submittedOnce = !!data.submittedOnce;
+        formTriggered = currentScore >= 15 || submittedOnce;
+      } catch (e) {}
+    }
+
+    function insertMath(s) {
+      const mf = document.getElementById('answer-input');
+      if (mf && mf.insert) { mf.focus(); mf.insert(s); }
+    }
+
+    function cmdMath(command) {
+      const mf = document.getElementById('answer-input');
+      if (mf && mf.executeCommand) { mf.focus(); mf.executeCommand(command); }
+    }
+
+    function initCanvas() {
+      canvas = document.getElementById('scratchpad');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      ['pointerdown','pointermove','pointerup','pointercancel','pointerout'].forEach(ev => canvas.addEventListener(ev, handlePointer));
+      window.addEventListener('resize', resizeCanvas);
+    }
+
+    function resizeCanvas() {
+      if (!canvas || !ctx) return;
+      const temp = document.createElement('canvas');
+      temp.width = canvas.width;
+      temp.height = canvas.height;
+      if (canvas.width && canvas.height) temp.getContext('2d').drawImage(canvas, 0, 0);
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 380;
+      ctx.strokeStyle = '#2980b9';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (temp.width && temp.height) ctx.drawImage(temp, 0, 0);
+    }
+
+    function handlePointer(e) {
+      if (!canvas || !ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      e.preventDefault();
+      if (e.type === 'pointerdown') {
+        isDrawing = true;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      } else if (e.type === 'pointermove' && isDrawing) {
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      } else {
+        isDrawing = false;
+        ctx.beginPath();
+      }
+    }
+
+    function clearScratchpad() {
+      if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function rand(min, max, excludes = []) {
+      let value;
+      do {
+        value = Math.floor(Math.random() * (max - min + 1)) + min;
+      } while (excludes.includes(value));
+      return value;
+    }
+
+    function pickNZ(min, max) { return rand(min, max, [0, 1, -1]); }
+    function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; }
+
+    function simp(n, d) {
+      if (d < 0) { n = -n; d = -d; }
+      const g = gcd(n, d);
+      return { n: n / g, d: d / g };
+    }
+
+    function lead(n) { return n === 1 ? '' : n === -1 ? '-' : String(n); }
+    function numFmt(n) { return n === 0 ? '' : n > 0 ? `+${n}` : String(n); }
+    function powerTex(base, exp) {
+      if (exp === 0) return '1';
+      if (exp === 1) return base;
+      return `${base}^{${exp}}`;
+    }
+
+    function linExpTex(m, c, variable = 'n') {
+      if (m === 0) return String(c);
+      return `${lead(m)}${variable}${numFmt(c)}`;
+    }
+
+    function exponentsToTex(aExp, bExp) {
+      const num = [];
+      const den = [];
+      [['a', aExp], ['b', bExp]].forEach(([v, e]) => {
+        if (e > 0) num.push(powerTex(v, e));
+        if (e < 0) den.push(powerTex(v, -e));
+      });
+      if (!num.length && !den.length) return '1';
+      const top = num.length ? num.join('') : '1';
+      return den.length ? `\\frac{${top}}{${den.join('')}}` : top;
+    }
+
+    function formatCoeffWithPower(num, den, variablePart = '') {
+      const s = simp(num, den);
+      num = s.n;
+      den = s.d;
+      if (den === 1) {
+        if (!variablePart) return String(num);
+        if (num === 1) return variablePart;
+        if (num === -1) return `-${variablePart}`;
+        return `${num}${variablePart}`;
+      }
+      const sign = num < 0 ? '-' : '';
+      const abs = Math.abs(num);
+      const top = variablePart ? (abs === 1 ? variablePart : `${abs}${variablePart}`) : String(abs);
+      return `${sign}\\frac{${top}}{${den}}`;
+    }
+
+    function stripOuterParens(str) {
+      let s = str;
+      let changed = true;
+      while (changed) {
+        changed = false;
+        if (s.startsWith('(') && s.endsWith(')')) {
+          let depth = 0, ok = true;
+          for (let i = 0; i < s.length; i++) {
+            if (s[i] === '(') depth++;
+            if (s[i] === ')') depth--;
+            if (depth === 0 && i < s.length - 1) { ok = false; break; }
+          }
+          if (ok) { s = s.slice(1, -1); changed = true; }
+        }
+      }
+      return s;
+    }
+
+    function extractGroup(str, start) {
+      if (str[start] !== '{') return null;
+      let depth = 0;
+      for (let i = start; i < str.length; i++) {
+        if (str[i] === '{') depth++;
+        if (str[i] === '}') depth--;
+        if (depth === 0) return { content: str.slice(start + 1, i), end: i + 1 };
+      }
+      return null;
+    }
+
+    function parsePositiveMonomial(str) {
+      let s = stripOuterParens(str);
+      if (s === '' || s === '1') return { ok: true, a: 0, b: 0 };
+      if (s.includes('\\frac')) return { ok: false };
+      s = s.replace(/\\cdot/g, '').replace(/\*/g, '').replace(/[{}]/g, '').replace(/\s+/g, '');
+      let i = 0;
+      let counts = { a: 0, b: 0 };
+      let seen = { a: false, b: false };
+      while (i < s.length) {
+        const ch = s[i];
+        if (ch === '1' || ch === '(' || ch === ')') { i++; continue; }
+        if (ch !== 'a' && ch !== 'b') return { ok: false };
+        if (seen[ch]) return { ok: false };
+        seen[ch] = true;
+        i++;
+        let exp = 1;
+        if (s[i] === '^') {
+          i++;
+          let expStr = '';
+          if (s[i] === '-') return { ok: false };
+          while (i < s.length && /[0-9]/.test(s[i])) { expStr += s[i]; i++; }
+          if (!expStr) return { ok: false };
+          exp = parseInt(expStr, 10);
+        }
+        if (!Number.isFinite(exp) || exp <= 0) return { ok: false };
+        counts[ch] = exp;
+      }
+      return { ok: true, a: counts.a, b: counts.b };
+    }
+
+    function parsePaper1Answer(latexStr) {
+      let s = latexStr || '';
+      s = s.replace(/\\displaystyle|\\textstyle|\\mleft|\\mright|\\left|\\right/g, '');
+      s = s.replace(/\s+/g, '').replace(/[−–—]/g, '-');
+      if (!s) return { ok: false };
+      if (/\^-/.test(s) || /\^\{-/.test(s)) return { ok: false };
+      s = stripOuterParens(s);
+      const fracCmd = s.match(/^\\(?:d|t)?frac/);
+      if (fracCmd) {
+        const start = fracCmd[0].length;
+        const top = extractGroup(s, start);
+        if (!top) return { ok: false };
+        const bottom = extractGroup(s, top.end);
+        if (!bottom || bottom.end !== s.length) return { ok: false };
+        const num = parsePositiveMonomial(top.content);
+        const den = parsePositiveMonomial(bottom.content);
+        if (!num.ok || !den.ok) return { ok: false };
+        return { ok: true, a: num.a - den.a, b: num.b - den.b };
+      }
+      return parsePositiveMonomial(s);
+    }
+
+    function verifyPaper1Answer(latexStr, expected) {
+      const parsed = parsePaper1Answer(latexStr);
+      return parsed.ok && parsed.a === expected.a && parsed.b === expected.b;
+    }
+
+    function safeTypeset(el) {
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([el]).catch(() => {});
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function uniqChoices(list) {
+      const seen = new Set();
+      return list.filter(item => !seen.has(item.tex) && seen.add(item.tex));
+    }
+
+    function mcQuestion(questionTex, correctTex, distractors, solutionTex) {
+      const pool = uniqChoices([{ tex: correctTex, correct: true }, ...distractors.map(tex => ({ tex, correct: false }))]);
+      const correct = pool.find(x => x.correct);
+      let others = pool.filter(x => !x.correct);
+      while (others.length > 3) others.pop();
+      const choices = shuffle([correct, ...others]).slice(0, 4);
+      return { mode: 'mcq', questionTex, choices, correctTex, solutionTex, answer: correctTex, points: 1 };
+    }
+
+    function makeAligned(lines) {
+      return `\\begin{aligned}${lines.map(line => line.replace('=', '&=')).join('\\\\')}\\end{aligned}`;
+    }
+
+    function genIndicesI() {
+      const a = pickNZ(-10, 10);
+      const b = pickNZ(-10, 10);
+      const ans = a * b;
+      const q = `(${powerTex('a', a)})^{${b}}`;
+      const finalTex = exponentsToTex(ans, 0);
+      const lines = [`${q} = ${powerTex('a', ans)}`];
+      if (powerTex('a', ans) !== finalTex) lines.push(`= ${finalTex}`);
+      return { mode: 'input', questionTex: q, answer: { a: ans, b: 0 }, solutionTex: makeAligned(lines), points: 1 };
+    }
+
+    function genIndicesII() {
+      const a = pickNZ(-10, 10);
+      const b = pickNZ(-10, 10);
+      const ans = a + b;
+      const q = `${powerTex('a', a)} \\times ${powerTex('a', b)}`;
+      const finalTex = exponentsToTex(ans, 0);
+      const lines = [`${q} = ${powerTex('a', ans)}`];
+      if (powerTex('a', ans) !== finalTex) lines.push(`= ${finalTex}`);
+      return { mode: 'input', questionTex: q, answer: { a: ans, b: 0 }, solutionTex: makeAligned(lines), points: 1 };
+    }
+
+    function genIndicesIII() {
+      const a = pickNZ(-8, 8);
+      const b = pickNZ(-8, 8);
+      const c = pickNZ(-10, 10);
+      const aExp = a * c;
+      const bExp = -b * c;
+      const q = `\\left(\\frac{${powerTex('a', a)}}{${powerTex('b', b)}}\\right)^{${c}}`;
+      const mid = `\\frac{${powerTex('a', aExp)}}{${powerTex('b', b * c)}}`;
+      const finalTex = exponentsToTex(aExp, bExp);
+      const lines = [`${q} = ${mid}`];
+      if (mid !== finalTex) lines.push(`= ${finalTex}`);
+      return { mode: 'input', questionTex: q, answer: { a: aExp, b: bExp }, solutionTex: makeAligned(lines), points: 1 };
+    }
+
+    function genIndicesIV() {
+      let a = rand(-8, 8, [0]), b = rand(-8, 8, [0]), c = pickNZ(-10, 10);
+      let d = rand(-10, 10, [0]), f = rand(-10, 10, [0]), g = pickNZ(-10, 10);
+      let aExp = a * c - d * g;
+      let bExp = b * c - f * g;
+      let tries = 0;
+      while ((aExp === 0 || bExp === 0) && tries < 20) {
+        a = rand(-8, 8, [0]); b = rand(-8, 8, [0]); c = pickNZ(-10, 10);
+        d = rand(-10, 10, [0]); f = rand(-10, 10, [0]); g = pickNZ(-10, 10);
+        aExp = a * c - d * g;
+        bExp = b * c - f * g;
+        tries++;
+      }
+      const q = `\\dfrac{(${powerTex('a', a)}${powerTex('b', b)})^{${c}}}{(${powerTex('a', d)}${powerTex('b', f)})^{${g}}}`;
+      const mid = `\\dfrac{${powerTex('a', a * c)}${powerTex('b', b * c)}}{${powerTex('a', d * g)}${powerTex('b', f * g)}}`;
+      const finalTex = exponentsToTex(aExp, bExp);
+      const lines = [`${q} = ${mid}`, `= ${finalTex}`];
+      return { mode: 'input', questionTex: q, answer: { a: aExp, b: bExp }, solutionTex: makeAligned(lines), points: 2 };
+    }
+
+    function genIndicesMCI() {
+      const a = rand(3, 12);
+      const b = rand(-5, -2);
+      const c = rand(2, 7);
+      const index = a * (-b);
+      const constant = Math.pow(c, -b);
+      const check = a + b;
+      const checkTwo = b * c;
+      const q = `(${c}${powerTex('n', a)})^{${b}} =`;
+      const correct = `\\frac{1}{${constant}${powerTex('n', index)}}`;
+      const wrong1 = check > 0 ? `\\frac{${powerTex('n', check)}}{${constant}}` : `\\frac{1}{${constant}${powerTex('n', Math.abs(check))}}`;
+      const wrong2 = `\\frac{${c}}{${powerTex('n', index)}}`;
+      const wrong3 = `-${constant}${powerTex('n', index)}`;
+      const wrong4 = checkTwo < 0 ? `-\\frac{${Math.abs(checkTwo)}}{${powerTex('n', index)}}` : `\\frac{${Math.abs(checkTwo)}}{${powerTex('n', index)}}`;
+      const solution = makeAligned([`${q.replace(' =','')} = ${correct}`]);
+      return mcQuestion(q, correct, [wrong1, wrong2, wrong3, wrong4], solution);
+    }
+
+    function genIndicesMCII() {
+      let a = rand(2, 7), b = rand(3, 7), c = rand(2, 5);
+      if (a === 2 && c === 2) c = rand(3, 5);
+      const d = rand(2, 10);
+      const f = rand(2, b - 1);
+      const constantOne = Math.pow(a, c);
+      const check = b * c - f;
+      const wrongOne = b + c - f;
+      const wrongTwo = (b - f) * c;
+      const wrongThree = a * c;
+      const wrongFour = Math.pow(b, c) - f;
+      const variable = powerTex('x', check);
+      const correct = formatCoeffWithPower(constantOne, d, variable === '1' ? '' : variable);
+      const w1 = formatCoeffWithPower(constantOne, d, powerTex('x', wrongOne));
+      const w2 = formatCoeffWithPower(constantOne, d, powerTex('x', wrongTwo));
+      const w3 = formatCoeffWithPower(wrongThree, d, powerTex('x', check));
+      const w4 = formatCoeffWithPower(constantOne, d, powerTex('x', wrongFour));
+      const q = `\\dfrac{(${a}x^{${b}})^{${c}}}{${d}x^{${f}}} =`;
+      const solution = makeAligned([`${q.replace(' =','')} = \\dfrac{${constantOne}${powerTex('x', b * c)}}{${d}x^{${f}}}`, `= ${correct}`]);
+      return mcQuestion(q, correct, [w1, w2, w3, w4], solution);
+    }
+
+    function genIndicesMCIII() {
+      const a = rand(2, 5), b = rand(2, 5);
+      let c = rand(-5, 5, [0]);
+      while (Math.abs(gcd(b, c)) !== 1) c = rand(-5, 5, [0]);
+      let d = rand(2, 5);
+      while (d === a) d = rand(2, 5);
+      const f = rand(2, 5);
+      const dPow = Math.pow(d, f);
+      const baseAns = a * dPow;
+      const q = `${a}^{${linExpTex(b, c, 'n')}} \\cdot ${d}^{${linExpTex(f * b, f * c, 'n')}} =`;
+      const correct = `${baseAns}^{${linExpTex(b, c, 'n')}}`;
+      const wrong1 = `${a * d}^{${linExpTex(b + f * b, c + f * c, 'n')}}`;
+      const wrong2 = `${a * d}^{${f * b * b}n^{2}${numFmt(b * f * c + f * b * c)}n${numFmt(c * f * c)}}`;
+      const wrong3 = `${a * d}^{${linExpTex(f * b, f * c, 'n')}}`;
+      const wrong4 = `${a * d * f}^{${linExpTex(f * b, f * c, 'n')}}`;
+      const solution = makeAligned([
+        `${q.replace(' =','')} = ${a}^{${linExpTex(b, c, 'n')}} \\cdot ${dPow}^{${linExpTex(b, c, 'n')}}`,
+        `= ${correct}`
+      ]);
+      return mcQuestion(q, correct, [wrong1, wrong2, wrong3, wrong4], solution);
+    }
+
+    function genIndicesMCIV() {
+      const a = rand(2, 3);
+      const b = rand(2, 4);
+      const c = rand(Math.max(5, b + 1), 5);
+      const d = rand(2, 5);
+      const f = rand(2, 5);
+      const g = rand(-5, 5, [0]);
+      const ans = b * d - c * f;
+      const check = (b - c) * g;
+      const Asetup = `${a}^{${b}}`;
+      const Bsetup = `${a}^{${c}}`;
+      const Awrapped = `\\left(${Asetup}\\right)`;
+      const Bwrapped = `\\left(${Bsetup}\\right)`;
+      let correct;
+      if (ans > 0) correct = `${a}^{${linExpTex(ans, check, 'n')}}`;
+      else if (ans < 0) correct = `\\dfrac{1}{${a}^{${linExpTex(-ans, -check, 'n')}}}`;
+      else if (check === 0) correct = '1';
+      else if (check > 0) correct = powerTex(String(a), check);
+      else correct = `\\dfrac{1}{${powerTex(String(a), -check)}}`;
+
+      const w1 = b > c ? `${a}^{${Math.abs(f - d)}n}` : `\\dfrac{1}{${a}^{${Math.abs(d - f)}n}}`;
+      const w2 = b < c ? `\\dfrac{1}{${a}^{${linExpTex(Math.abs(b * d - c * f), Math.abs(b * g - c * g), 'n')}}}` : `${a}^{${linExpTex(Math.abs(c * f - b * d), c * g - b * g, 'n')}}`;
+      const w3 = b < c ? `${a}^{${linExpTex(Math.abs(b - c), b - c, 'n')}}` : `${a}^{${linExpTex(Math.abs(c - b), c - b, 'n')}}`;
+      const w4 = b < c ? `\\dfrac{1}{${a}^{${Math.abs(d - f + 8)}n}}` : `\\dfrac{1}{${a}^{${Math.abs(f - d + 5)}n}}`;
+      const q = `\\dfrac{${Awrapped}^{${linExpTex(d, g, 'n')}}}{${Bwrapped}^{${linExpTex(f, g, 'n')}}} =`;
+      const solution = makeAligned([
+        `${q.replace(' =','')} = \\dfrac{(${a}^{${b}})^{${linExpTex(d, g, 'n')}}}{(${a}^{${c}})^{${linExpTex(f, g, 'n')}}}`,
+        `= \\dfrac{${a}^{${linExpTex(b * d, b * g, 'n')}}}{${a}^{${linExpTex(c * f, c * g, 'n')}}}`,
+        `= ${correct}`
+      ]);
+      return mcQuestion(q, correct, [w1, w2, w3, w4], solution);
+    }
+
+    function generatePaper1Level1() {
+      const generators = [genIndicesI, genIndicesII, genIndicesIII];
+      return generators[rand(0, generators.length - 1)]();
+    }
+
+    function generatePaper2() {
+      const generators = [genIndicesMCI, genIndicesMCII, genIndicesMCIII, genIndicesMCIV];
+      return generators[rand(0, generators.length - 1)]();
+    }
+
+    function setMode(mode) {
+      document.getElementById('input-mode').classList.toggle('hidden', mode !== 'input');
+      document.getElementById('mcq-mode').classList.toggle('hidden', mode !== 'mcq');
+    }
+
+    function renderChoices(choices) {
+      const wrap = document.getElementById('choices');
+      selectedChoice = null;
+      wrap.innerHTML = '';
+      choices.forEach((choice, index) => {
+        const div = document.createElement('div');
+        div.className = 'choice';
+        div.innerHTML = `\\(${choice.tex}\\)`;
+        div.onclick = () => {
+          selectedChoice = index;
+          [...wrap.children].forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+        };
+        wrap.appendChild(div);
+      });
+      safeTypeset(wrap);
+    }
+
+    function startQuestion(paper, level) {
+      try {
+        currentPaper = paper;
+        currentLevel = level;
+        document.getElementById('menu-screen').classList.add('hidden');
+        document.getElementById('question-screen').classList.remove('hidden');
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.innerText = 'Submit Answer';
+        submitBtn.style.backgroundColor = '';
+        submitBtn.onclick = checkAnswer;
+
+        if (!canvas) initCanvas();
+        resizeCanvas();
+        clearScratchpad();
+
+        let qData;
+        if (paper === 'paper1' && level === 1) qData = generatePaper1Level1();
+        else if (paper === 'paper1' && level === 2) qData = genIndicesIV();
+        else qData = generatePaper2();
+
+        currentQuestion = qData;
+        currentSolutionTex = qData.solutionTex;
+        setMode(qData.mode);
+
+        const title = paper === 'paper1'
+          ? `Paper 1 · Level ${level} Question`
+          : 'Paper 2 Question';
+        document.getElementById('level-title').textContent = title;
+
+        const display = document.getElementById('question-display');
+        display.innerHTML = `$$${qData.questionTex}$$`;
+        safeTypeset(display);
+
+        const mf = document.getElementById('answer-input');
+        if (mf) mf.value = '';
+        if (qData.mode === 'mcq') renderChoices(qData.choices);
+        setTimeout(() => { if (qData.mode === 'input' && mf) mf.focus(); }, 120);
+      } catch (e) {
+        alert('Please wait a moment for the math engine to finish loading, then try again.');
+        returnToMenu();
+      }
+    }
+
+    function buildHistoryEntry(isCorrect) {
+      if (!currentQuestion) return;
+      const question = currentQuestion.questionTex;
+      const studentAnswer = currentQuestion.mode === 'input'
+        ? document.getElementById('answer-input').value
+        : (selectedChoice !== null ? currentQuestion.choices[selectedChoice].tex : '');
+      history.push({
+        question,
+        studentAnswer,
+        correctAnswer: currentQuestion.answer,
+        paper: currentPaper,
+        level: currentLevel,
+        type: currentQuestion.mode === 'input' ? 'short-answer' : 'multiple-choice',
+        correct: isCorrect
+      });
+      saveProgress();
+    }
+
+    async function awardCorrect(points) {
+      currentScore += points;
+      if (currentPaper === 'paper1' && currentLevel === 1) levelCounts.p1l1++;
+      else if (currentPaper === 'paper1' && currentLevel === 2) levelCounts.p1l2++;
+      else levelCounts.p2++;
+      updateScoreUI();
+      await saveProgress();
+    }
+
+    function checkAnswer() {
+      if (!currentQuestion) return;
+      const modal = document.getElementById('feedback-modal');
+      const title = document.getElementById('feedback-title');
+      const msg = document.getElementById('feedback-message');
+      const correctDiv = document.getElementById('feedback-correct-answer');
+      const feedbackBtn = document.getElementById('feedback-btn');
+
+      let isCorrect = false;
+      if (currentQuestion.mode === 'input') {
+        const studentInput = document.getElementById('answer-input').value;
+        if (!studentInput.trim()) return;
+        isCorrect = verifyPaper1Answer(studentInput, currentQuestion.answer);
+      } else {
+        if (selectedChoice === null) return;
+        isCorrect = !!currentQuestion.choices[selectedChoice].correct;
+      }
+
+      buildHistoryEntry(isCorrect);
+
+      if (isCorrect) {
+        title.textContent = 'Congratulations!';
+        title.style.color = 'var(--success)';
+        msg.textContent = 'This is the correct answer.';
+        correctDiv.style.display = 'none';
+        correctDiv.innerHTML = '';
+        feedbackBtn.textContent = 'Continue';
+        feedbackBtn.onclick = closeFeedback;
+        awardCorrect(currentQuestion.points || 1);
+      } else {
+        title.textContent = 'Incorrect';
+        title.style.color = 'var(--danger)';
+        msg.textContent = 'Here is the step-by-step solution (answers in Paper 1 must be simplified using positive indices):';
+        feedbackBtn.textContent = 'Review My Work';
+        feedbackBtn.onclick = reviewWork;
+        correctDiv.style.display = 'block';
+        correctDiv.innerHTML = `$$${currentSolutionTex}$$`;
+        safeTypeset(correctDiv);
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeFeedback() {
+      document.getElementById('feedback-modal').classList.add('hidden');
+      if (currentScore >= 15 && !formTriggered && !submittedOnce) {
+        formTriggered = true;
+        document.getElementById('form-modal').classList.remove('hidden');
+      } else {
+        returnToMenu();
+      }
+    }
+
+    function reviewWork() {
+      document.getElementById('feedback-modal').classList.add('hidden');
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.innerText = 'Start a New Question';
+      submitBtn.style.backgroundColor = 'var(--primary)';
+      submitBtn.onclick = returnToMenu;
+    }
+
+    function returnToMenu() {
+      document.getElementById('question-screen').classList.add('hidden');
+      document.getElementById('menu-screen').classList.remove('hidden');
+    }
+
+    async function submitResults() {
+      if (submittedOnce) return;
+      const name = document.getElementById('student-name').value.trim();
+      const stuClass = document.getElementById('student-class').value;
+      const stuNum = document.getElementById('student-number').value;
+      const status = document.getElementById('form-status');
+      const btn = document.getElementById('final-submit-btn');
+
+      if (!name) { alert('Please enter your name.'); return; }
+
+      btn.disabled = true;
+      status.style.display = 'block';
+      status.textContent = 'Submitting...';
+
+      const responses = [
+        { question: 'Student information', answer: { name, class: stuClass, classNumber: stuNum }, type: 'student-info' },
+        ...history.map(item => ({
+          question: item.question,
+          answer: item.studentAnswer,
+          type: item.type
+        }))
+      ];
+
+      try {
+        if (window.sayoSubmit) {
+          const result = await window.sayoSubmit({ responses });
+          if (!result.ok) throw new Error('submit failed');
+        }
+        submittedOnce = true;
+        await saveProgress();
+        status.textContent = 'Submitted successfully!';
+        document.getElementById('form-modal').classList.add('hidden');
+        returnToMenu();
+      } catch (e) {
+        status.textContent = 'Submission failed. Please try again.';
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
